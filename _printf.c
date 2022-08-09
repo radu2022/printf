@@ -1,49 +1,47 @@
-#include <stdio.h>
-#include <stdarg.h>
 #include "main.h"
 /**
- * _printf - prints anything
- * @format: pointer to string that contains specifiers
- * Return: number of characters printed
- **/
-int _printf(const char *format, ...)
+ * _printf - prints formatted data to stdout
+ * @format: string that contains the format to print
+ * Return: number of characters written
+ */
+int _printf(char *format, ...)
 {
-
-unsigned int count = 0, i = 0;
-int (*f)(va_list);
-va_list list;
-if (format == '\0')
+int written = 0, (*structype)(char *, va_list);
+char q[3];
+va_list pa;
+if (format == NULL)
 return (-1);
-va_start(list, format);
-while (format && format[i])
+q[2] = '\0';
+va_start(pa, format);
+_putchar(-1);
+while (format[0])
 {
-if (format[i] != '%')
+if (format[0] == '%')
 {
-_putchar(format[i]);
-count++;
+structype = driver(format);
+if (structype)
+{
+q[0] = '%';
+q[1] = format[1];
+written += structype(q, pa);
 }
-else if (format[i] == '%' && format[i + 1] == '\0')
-return (-1);
-else if (format[i] == '\0')
-return (count);
-else if (format[i] == '%')
+else if (format[1] != '\0')
 {
-f = getspecifier(format, i + 1);
-i += 1;
-if (f == NULL)
-{
-count += strange(format, i);
+written += _putchar('%');
+written += _putchar(format[1]);
 }
 else
 {
-count = count + f(list);
-if (format[i] == '+' || format[i] == ' ' || format[i] == '#')
-i++;
+written += _putchar('%');
+break;
+}
+format += 2;
+}
+else
+{
+written += _putchar(format[0]);
+format++;
 }
 }
-i++;
-}
-va_end(list);
-return (count);
-
-}
+_putchar(-2);
+return (written); }
