@@ -1,44 +1,49 @@
+#include <stdio.h>
+#include <stdarg.h>
 #include "main.h"
 /**
- * _printf - is a function that selects the correct function to print.
- * @format: identifier to look for.
- * Return: the length of the string.
- */
-int _printf(const char * const format, ...)
+ * _printf - prints anything
+ * @format: pointer to string that contains specifiers
+ * Return: number of characters printed
+ **/
+int _printf(const char *format, ...)
 {
 
-convert_match m[] = {
-		       {"%s", printf_string}, {"%c", printf_char},
-		       {"%%", printf_37},
-		       {"%i", printf_int}, {"%d", printf_dec}, {"%r", printf_srev},
-		       {"%R", printf_rot13}, {"%b", printf_bin}, {"%u", printf_unsigned},
-		       {"%o", printf_oct}, {"%x", printf_hex}, {"%X", printf_HEX},
-		       {"%S", printf_exclusive_string}, {"%p", printf_pointer}
-};
-va_list args;
-int i = 0, j, len = 0;
-va_start(args, format);
-if (format == NULL || (format[0] == '%' && format[1] == '\0'))
+unsigned int count = 0, i = 0;
+int (*f)(va_list);
+va_list list;
+if (format == '\0')
 return (-1);
-Here:
-while (format[i] != '\0')
+va_start(list, format);
+while (format && format[i])
 {
-j = 13;
-while (j >= 0)
+if (format[i] != '%')
 {
-if (m[j].id[0] == format[i] && m[j].id[1] == format[i + 1])
-{
-len += m[j].f(args);
-i = i + 2;
-goto Here;
-}
-j--;
-}
 _putchar(format[i]);
-len++;
+count++;
+}
+else if (format[i] == '%' && format[i + 1] == '\0')
+return (-1);
+else if (format[i] == '\0')
+return (count);
+else if (format[i] == '%')
+{
+f = getspecifier(format, i + 1);
+i += 1;
+if (f == NULL)
+{
+count += strange(format, i);
+}
+else
+{
+count = count + f(list);
+if (format[i] == '+' || format[i] == ' ' || format[i] == '#')
 i++;
 }
-va_end(args);
-return (len);
+}
+i++;
+}
+va_end(list);
+return (count);
 
 }
