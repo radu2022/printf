@@ -1,7 +1,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-1;2c#include "main.h"
+#include "main.h"
 #include <stddef.h>
 /**
  * _printf - recreates the printf function
